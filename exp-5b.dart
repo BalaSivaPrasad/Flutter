@@ -1,0 +1,99 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+// ------ Provider Model ------
+class CounterModel extends ChangeNotifier {
+ int _count = 0;
+ int get count => _count;
+ void increment() {
+ _count++;
+ notifyListeners();
+ }
+}
+void main() {
+ runApp(
+ ChangeNotifierProvider(
+ create: (_) => CounterModel(),
+ child: const MyApp(),
+ ),
+ );
+}
+class MyApp extends StatelessWidget {
+ const MyApp({super.key});
+ @override
+ Widget build(BuildContext context) {
+ return MaterialApp(
+ home: const HomePage(),
+ debugShowCheckedModeBanner: false,
+ );
+ }
+}
+class HomePage extends StatefulWidget {
+ const HomePage({super.key});
+ @override
+ State<HomePage> createState() => _HomePageState();
+}
+class _HomePageState extends State<HomePage> {
+ int localCounter = 0; // For setState example
+ @override
+ Widget build(BuildContext context) {
+ final providerCounter = Provider.of<CounterModel>(context);
+ return Scaffold(
+ appBar: AppBar(title: const Text('State Management: setState & Provider')),
+ body: Padding(
+ padding: const EdgeInsets.all(20),
+ child: Center(
+ child: Column(
+ mainAxisAlignment: MainAxisAlignment.center,
+ children: [
+ // setState Example
+ Card(
+ color: Colors.blue.shade50,
+ child: Padding(
+ padding: const EdgeInsets.all(16),
+ child: Column(
+ children: [
+ const Text(
+ 'setState Example',
+ style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+ ),
+ const SizedBox(height: 8),
+ Text('Counter: $localCounter', style: const TextStyle(fontSize: 16)),
+ const SizedBox(height: 8),
+ ElevatedButton(
+ onPressed: () => setState(() => localCounter++),
+ child: const Text('Increase (setState)'),
+ ),
+ ],
+ ),
+ ),
+ ),
+ const SizedBox(height: 30),
+ // Provider Example
+ Card(
+ color: Colors.green.shade100,
+ child: Padding(
+ padding: const EdgeInsets.all(16),
+ child: Column(
+ children: [
+ const Text(
+ 'Provider Example',
+ style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+ ),
+ const SizedBox(height: 8),
+ Text('Counter: ${providerCounter.count}', style: const TextStyle(fontSize: 16)),
+ const SizedBox(height: 8),
+ ElevatedButton(
+ onPressed: () => providerCounter.increment(),
+ child: const Text('Increase (Provider)'),
+ ),
+ ],
+ ),
+ ),
+ ),
+ ],
+ ),
+ ),
+ ),
+ );
+ }
+}
